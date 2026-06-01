@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#eaeaea">
+  <title>超速｜中村不動産</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=LINE+Seed+JP:wght@400;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html {
+      background-color: #eaeaea;
+    }
+
+    body {
+      font-family: 'LINE Seed JP', 'Hiragino Sans', 'Noto Sans JP', sans-serif;
+      background: url(./assets/bg-repeat.png) repeat center top;
+      color: #111;
+      margin: 0 auto;
+      overflow-x: hidden;
+      position: relative;
+      padding-top: env(safe-area-inset-top);
+    }
+
+    /* ボトム固定 x-repeat背景 */
+    .bg-bottom {
+      position: fixed;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+      max-width: 500px;
+      height: 415px;
+      background: url(./assets/bg_x-repeat.png) repeat-x center bottom;
+      background-size: 100% auto;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ===== HERO SECTION ===== */
+    .hero {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      padding: 28px 0 0;
+    }
+    .hero-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 60px;
+      padding: 0 0 0;
+    }
+
+    /* ロゴ */
+    .hero-logo {
+      width: 69%;
+      max-width: 340px;
+      height: auto;
+      display: block;
+    }
+
+    /* ヒーローメッセージ画像 */
+    .hero-message {
+      width: 72%;
+      max-width: 360px;
+      height: auto;
+      display: block;
+      margin: 0 auto;
+    }
+
+    /* 日付ピル + フィーチャーバナー */
+    .date-banner-wrap {
+      position: relative;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .date-pill {
+      position: relative;
+      z-index: 2;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: #b7ff01;
+      border: 1px solid #111;
+      border-radius: 100px;
+      padding: 7px 18px;
+      font-size: 18px;
+      font-weight: 800;
+      color: #111;
+      white-space: nowrap;
+      box-shadow: 3px 3px 0px 0px #111;
+      margin-bottom: -7px;
+    }
+    .feature-banner {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      background: #fff;
+      border-top: 1px solid #111;
+      border-bottom: 1px solid #111;
+      box-shadow: 0px 4px 0px #111;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 15px 16px 14px;
+      min-height: 49px;
+    }
+    .feature-banner p {
+      font-size: 18px;
+      font-weight: 700;
+      color: #111;
+      white-space: nowrap;
+    }
+
+    /* ===== カードグリッド ===== */
+    .card-section {
+      position: relative;
+      z-index: 1;
+      padding: 20px 10px 31px 10px;
+    }
+    .card-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 9px;
+    }
+    .card {
+      background: #fff;
+      border: 1.5px solid #111;
+      border-radius: 12px;
+      overflow: hidden;
+      cursor: pointer;
+      box-shadow: 4px 4px 0px 0px #111;
+      -webkit-tap-highlight-color: transparent;
+      transition: opacity 0.15s;
+    }
+    .card:active { opacity: 0.7; }
+    .card-image {
+      width: 100%;
+      aspect-ratio: 4 / 3;
+      object-fit: cover;
+      display: block;
+    }
+    .card-no-image {
+      width: 100%;
+      aspect-ratio: 4 / 3;
+      background: linear-gradient(180deg, #e0dedd 0%, #eeeceb 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #aaa;
+      font-size: 11px;
+    }
+    .card-body {
+      padding: 9px 9px 11px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .card-name {
+      font-size: 12px;
+      font-weight: 700;
+      color: #111;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      line-height: normal;
+    }
+    .card-price-row {
+      display: flex;
+      align-items: baseline;
+      gap: 4px;
+      white-space: nowrap;
+      overflow: hidden;
+    }
+    .card-price {
+      font-size: 16px;
+      font-weight: 800;
+      color: #111;
+      line-height: normal;
+    }
+    .card-fee {
+      font-size: 11px;
+      font-weight: 400;
+      color: #888;
+    }
+    .card-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+    }
+    .tag {
+      font-size: 8px;
+      font-weight: 400;
+      border: 1px solid #111;
+      border-radius: 100px;
+      padding: 3px 7px;
+      color: #111;
+      white-space: nowrap;
+    }
+    .card-empty {
+      grid-column: 1 / -1;
+      text-align: center;
+      color: #bbb;
+      font-size: 13px;
+      padding: 32px 0;
+    }
+
+    /* ===== 中村不動産 CTA ===== */
+    .nakamura-cta {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 13px;
+      padding: 0 15px 50px;
+    }
+    .nakamura-cta-text {
+      font-size: 16px;
+      font-weight: 400;
+      color: #111;
+      text-align: center;
+      white-space: nowrap;
+    }
+    .nakamura-logo-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .nakamura-logo-btn img {
+      width: 100%;
+      max-width: 183px;
+      height: auto;
+      display: block;
+    }
+
+    /* ===== PAST POST ===== */
+    .past-section {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .past-pill-wrap {
+      position: relative;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .past-pill {
+      position: relative;
+      z-index: 2;
+      background: #b7ff01;
+      border: 1px solid #111;
+      border-radius: 100px;
+      padding: 7px 18px;
+      font-size: 18px;
+      font-weight: 800;
+      color: #111;
+      box-shadow: 3px 3px 0px 0px #111;
+      margin-bottom: -7px;
+    }
+    .past-list {
+      width: 100%;
+    }
+    .past-row {
+      background: #fff;
+      border-top: 1px solid #111;
+      border-bottom: 1px solid #111;
+      box-shadow: 0px 4px 0px #111;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 15px 15px 14px;
+      height: 49px;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      margin-bottom: 0;
+      position: relative;
+      z-index: 1;
+    }
+    .past-row + .past-row {
+      margin-top: -1px;
+    }
+    .past-row-date {
+      font-size: 18px;
+      font-weight: 400;
+      color: #111;
+      white-space: nowrap;
+    }
+    .past-row-title {
+      font-size: 13px;
+      color: #888;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin: 0 8px;
+      flex: 1;
+    }
+    .past-arrow {
+      width: 24px;
+      height: 24px;
+      flex-shrink: 0;
+      transition: transform 0.2s;
+    }
+    .past-arrow.open { transform: rotate(180deg); }
+    .past-cards {
+      display: none;
+    }
+    .past-cards.open {
+      display: block;
+    }
+    .past-cards-inner {
+      padding: 20px 10px 20px;
+    }
+    .past-feature-label {
+      display: inline-flex;
+      align-items: center;
+      margin: 0 0 10px;
+    }
+    .past-feature-label span {
+      background: #b7ff01;
+      font-size: 18px;
+      font-weight: 700;
+      color: #111;
+      padding: 0 4px;
+    }
+
+    /* ===== FOOTER ===== */
+    .footer-spacer { height: 80px; }
+    .footer {
+      position: relative;
+      z-index: 5;
+      background: #e1e1e1;
+      border-top: 1px solid #111;
+      padding: 40px 10px calc(40px + env(safe-area-inset-bottom) + 100vh - 100dvh);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+    }
+    .footer-icons {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 50px;
+      padding-bottom: 15px;
+      width: 100%;
+    }
+    .footer-icon {
+      width: 30px;
+      height: 30px;
+      object-fit: contain;
+      display: block;
+    }
+    .footer-text {
+      text-align: center;
+      font-size: 12px;
+      font-weight: 700;
+      color: #111;
+      line-height: 2;
+    }
+    .footer-text .light {
+      font-weight: 400;
+    }
+
+    /* ===== モーダル ===== */
+    .overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.45);
+      z-index: 200;
+      align-items: flex-end;
+      justify-content: center;
+    }
+    .overlay.open { display: flex; }
+    .modal {
+      background: #fff;
+      border-radius: 20px 20px 0 0;
+      width: 100%;
+      max-width: 500px;
+      max-height: 88vh;
+      overflow-y: auto;
+      padding-bottom: 32px;
+      -webkit-overflow-scrolling: touch;
+    }
+    .modal-handle {
+      width: 36px;
+      height: 4px;
+      background: #ddd;
+      border-radius: 2px;
+      margin: 12px auto 14px;
+    }
+    .modal-images {
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+      padding: 0 16px 12px;
+      scrollbar-width: none;
+    }
+    .modal-images::-webkit-scrollbar { display: none; }
+    .modal-img {
+      flex-shrink: 0;
+      width: min(calc(100vw - 48px), 452px);
+      aspect-ratio: 4/3;
+      object-fit: cover;
+      border-radius: 12px;
+      background: #f0f0f0;
+    }
+    .modal-body { padding: 0 16px; }
+    .modal-name { font-size: 20px; font-weight: 800; margin-bottom: 6px; }
+    .modal-price { font-size: 26px; font-weight: 800; margin-bottom: 2px; }
+    .modal-fee-text { font-size: 13px; color: #666; margin-bottom: 14px; }
+    .modal-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 18px;
+    }
+    .modal-tag {
+      font-size: 12px;
+      border: 1px solid #ddd;
+      border-radius: 20px;
+      padding: 4px 10px;
+      color: #444;
+    }
+    .detail-table {
+      background: #f8f8f8;
+      border-radius: 12px;
+      padding: 4px 14px;
+      margin-bottom: 20px;
+    }
+    .detail-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 11px 0;
+      border-bottom: 1px solid #efefef;
+      font-size: 14px;
+    }
+    .detail-row:last-child { border-bottom: none; }
+    .detail-label { color: #888; }
+    .detail-value { font-weight: 600; }
+    .copy-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      background: #fff;
+      color: #111;
+      font-size: 14px;
+      font-weight: 600;
+      padding: 13px;
+      border-radius: 12px;
+      border: 1.5px solid #111;
+      cursor: pointer;
+      margin-bottom: 10px;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .copy-btn:active { opacity: 0.6; }
+    .copy-btn.copied { color: #888; border-color: #ccc; }
+    .line-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      background: #06C755;
+      color: #fff;
+      font-size: 16px;
+      font-weight: 700;
+      padding: 16px;
+      border-radius: 12px;
+      text-decoration: none;
+    }
+    @keyframes pc-scroll {
+      from { background-position-x: 0; }
+      to   { background-position-x: -945px; }
+    }
+
+    /* PC サイドバー（SP非表示） */
+    .pc-sidebar { display: none; }
+
+    /* ===== PC レイアウト (≥501px) ===== */
+    @media (min-width: 501px) {
+      html {
+        background-color: #fff;
+        background-image: url(./assets/bg-pc.png);
+        background-repeat: repeat-x;
+        background-position: 0 bottom;
+        background-size: 945px 374px;
+        background-attachment: fixed;
+        animation: pc-scroll 50s linear infinite;
+      }
+
+      body {
+        max-width: 500px;
+        border-left: 1.5px solid #111;
+        border-right: 1.5px solid #111;
+        box-shadow: 4px 0 0 0 #111;
+      }
+      .bg-bottom {
+        height: 532px;
+      }
+
+      /* SPロゴはPC非表示（左サイドバーに移動） */
+      .hero-logo { display: none; }
+
+      /* PCサイドバー共通（SP非表示 → PC表示） */
+      .pc-sidebar {
+        display: flex;
+        position: fixed;
+        top: 0;
+        height: 100vh;
+        align-items: center;
+        justify-content: center;
+        z-index: 2;
+      }
+      .pc-sidebar-left {
+        left: 0;
+        width: calc(50vw - 250px);
+        padding: 40px;
+      }
+      .pc-sidebar-right {
+        right: 0;
+        width: calc(50vw - 250px);
+        flex-direction: column;
+        gap: 10px;
+        padding: 40px;
+      }
+
+      /* PCロゴ */
+      .pc-logo {
+        width: min(328px, 80%);
+        height: auto;
+      }
+
+      /* PCボタン */
+      .pc-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: min(200px, 80%);
+        padding: 10px 16px;
+        background: #fff;
+        border: 1px solid #111;
+        border-radius: 12px;
+        box-shadow: 4px 4px 0px #111;
+        font-family: 'LINE Seed JP', 'Hiragino Sans', sans-serif;
+        font-size: 18px;
+        font-weight: 700;
+        color: #111;
+        text-decoration: none;
+        transition: background 0.15s;
+        white-space: nowrap;
+      }
+      .pc-btn:hover { background: #B7FF01; }
+
+    }
+
+  </style>
+</head>
+<body>
+
+  <!-- PC左サイドバー：ロゴ -->
+  <div class="pc-sidebar pc-sidebar-left">
+    <img class="pc-logo" src="./assets/chosoku-logo.svg" alt="超速 中村不動産">
+  </div>
+
+  <!-- PC右サイドバー：リンクボタン -->
+  <div class="pc-sidebar pc-sidebar-right">
+    <a class="pc-btn" href="https://www.kinoco-inc.com/" target="_blank" rel="noopener">中村不動産サイト</a>
+    <a class="pc-btn" href="https://s.lmes.jp/landing-qr/1661555878-8a2jMoa9?uLand=p7XUwb" target="_blank" rel="noopener">公式LINE</a>
+    <a class="pc-btn" href="https://www.instagram.com/kinoco_nakamura_tenjin/" target="_blank" rel="noopener">Instagram</a>
+    <a class="pc-btn" href="https://www.tiktok.com/@kinoco_fukuoka" target="_blank" rel="noopener">TikTok</a>
+  </div>
+
+  <!-- ボトム固定x-repeat背景 -->
+  <div class="bg-bottom"></div>
+
+  <!-- ===== HERO ===== -->
+  <section class="hero" id="heroSection">
+    <div class="hero-content">
+
+      <!-- ロゴ -->
+      <img class="hero-logo" src="./assets/chosoku-logo.svg" alt="超速 中村不動産">
+
+      <!-- ヒーローメッセージ -->
+      <img class="hero-message" src="./assets/hero-message.png" alt="">
+
+      <!-- 日付ピル + フィーチャーバナー -->
+      <div class="date-banner-wrap">
+        <div class="date-pill" id="datePill">―</div>
+        <div class="feature-banner" id="featureBanner">
+          <p id="featureText"></p>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ===== TODAY CARDS ===== -->
+  <section class="card-section">
+    <div class="card-grid" id="todayGrid">
+      <div class="card-empty">読み込み中...</div>
+    </div>
+  </section>
+
+  <!-- ===== 中村不動産 CTA ===== -->
+  <div class="nakamura-cta">
+    <p class="nakamura-cta-text">より多くの物件は中村不動産公式サイトで</p>
+    <a class="nakamura-logo-btn" href="https://www.kinoco-inc.com/" target="_blank" rel="noopener">
+      <img src="./assets/btn-nakamura.png" alt="中村不動産">
+    </a>
+  </div>
+
+  <!-- ===== PAST POST ===== -->
+  <section class="past-section" id="pastSection" style="display:none">
+    <div class="past-pill-wrap">
+      <div class="past-pill">Past post</div>
+    </div>
+    <div class="past-list" id="pastList"></div>
+  </section>
+
+  <!-- ===== FOOTER ===== -->
+  <div class="footer-spacer"></div>
+  <footer class="footer">
+    <div class="footer-icons">
+      <a href="https://s.lmes.jp/landing-qr/1661555878-8a2jMoa9?uLand=p7XUwb" target="_blank" rel="noopener">
+        <img class="footer-icon" src="./assets/sns/line.svg" alt="LINE">
+      </a>
+      <a href="https://www.instagram.com/kinoco_nakamura_tenjin/" target="_blank" rel="noopener">
+        <img class="footer-icon" src="./assets/sns/Instagram_Glyph_Gradient.svg" alt="Instagram">
+      </a>
+      <a href="https://www.tiktok.com/@kinoco_fukuoka" target="_blank" rel="noopener">
+        <img class="footer-icon" src="./assets/sns/tiktok.png" alt="TikTok">
+      </a>
+    </div>
+    <div class="footer-text">
+      <p>株式会社KINOCO 中村不動産</p>
+      <p class="light">[福岡県知事(2) 第18428号]</p>
+    </div>
+  </footer>
+
+  <!-- ===== モーダル ===== -->
+  <div class="overlay" id="overlay" onclick="handleOverlayClick(event)">
+    <div class="modal" id="modal">
+      <div class="modal-handle"></div>
+      <div class="modal-images" id="modalImages"></div>
+      <div class="modal-body">
+        <div class="modal-name" id="modalName"></div>
+        <div class="modal-price" id="modalPrice"></div>
+        <div class="modal-fee-text" id="modalFeeText"></div>
+        <div class="modal-tags" id="modalTags"></div>
+        <div class="detail-table" id="detailTable"></div>
+        <button class="copy-btn" id="copyBtn" onclick="copyPropertyInfo()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          物件情報をコピー
+        </button>
+        <a class="line-btn" id="lineBtn" href="#" target="_blank" rel="noopener">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M19.365 9.863c.349 0 .63.285.63.631 0 .345-.281.63-.63.63H17.61v1.125h1.755c.349 0 .63.283.63.630 0 .344-.281.629-.63.629h-2.386c-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63h2.386c.349 0 .63.285.63.63 0 .349-.281.63-.63.63H17.61v1.125h1.755zm-3.855 3.016c0 .27-.174.51-.432.596-.064.021-.133.031-.199.031-.211 0-.391-.09-.51-.25l-2.443-3.317v2.94c0 .344-.279.629-.631.629-.346 0-.626-.285-.626-.629V8.108c0-.27.173-.51.43-.595.06-.023.136-.033.194-.033.195 0 .375.104.495.254l2.462 3.33V8.108c0-.345.282-.63.63-.63.345 0 .63.285.63.63v4.771zm-5.741 0c0 .344-.282.629-.631.629-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.627-.63.349 0 .631.285.631.63v4.771zm-2.466.629H4.917c-.345 0-.63-.285-.63-.629V8.108c0-.345.285-.63.63-.63.348 0 .63.285.63.63v4.141h1.756c.348 0 .629.283.629.630 0 .344-.281.629-.629.629M24 10.314C24 4.943 18.615.572 12 .572S0 4.943 0 10.314c0 4.811 4.27 8.842 10.035 9.608.391.082.923.258 1.058.59.12.301.079.766.038 1.08l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.078 9.436-6.975C23.176 14.393 24 12.458 24 10.314"/></svg>
+          LINEで問い合わせる
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const LINE_URL = 'https://s.lmes.jp/landing-qr/1661555878-8a2jMoa9?uLand=p7XUwb';
+
+    function todayStr() {
+      const d = new Date();
+      return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+    }
+    function pastStr(n) {
+      const d = new Date(); d.setDate(d.getDate() - n);
+      return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+    }
+    function pad(n) { return String(n).padStart(2,'0'); }
+    function fmtDate(str) {
+      const d = new Date(str + 'T00:00:00');
+      const days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+      return `${d.getMonth()+1}/${d.getDate()} ${days[d.getDay()]}`;
+    }
+    function fmtPrice(n) { return '¥' + Number(n).toLocaleString(); }
+
+    function buildCard(p) {
+      const img = p.images && p.images.length
+        ? `<img class="card-image" src="${p.images[0]}" alt="${p.name}" loading="lazy">`
+        : `<div class="card-no-image">no image</div>`;
+      const fee = p.fee ? `<span class="card-fee">（共${fmtPrice(p.fee)}）</span>` : '';
+      return `
+        <div class="card" onclick="openModal('${p.id}')">
+          ${img}
+          <div class="card-body">
+            <div class="card-name">${p.name} ${p.room}</div>
+            <div class="card-price-row">
+              <span class="card-price">${fmtPrice(p.rent)}</span>${fee}
+            </div>
+            <div class="card-tags">
+              <span class="tag">${p.area}</span>
+              <span class="tag">${p.layout}</span>
+              <span class="tag">${p.size}m²</span>
+            </div>
+          </div>
+        </div>`;
+    }
+
+    let allProps = [];
+    let currentPropId = null;
+
+    function render(data) {
+      allProps = data.properties || [];
+      const titles = data.titles || {};
+      const td = todayStr();
+      const todayList = allProps.filter(p => p.date === td);
+      const pastDates = [...new Set(allProps.filter(p => p.date !== td && p.date >= pastStr(10)).map(p => p.date))].sort((a,b) => b > a ? 1 : -1);
+
+      // 日付ピル
+      document.getElementById('datePill').textContent = fmtDate(td);
+
+      // フィーチャーバナー
+      const featureText = document.getElementById('featureText');
+      const featureBanner = document.getElementById('featureBanner');
+      if (titles[td]) {
+        featureText.textContent = titles[td];
+        featureBanner.style.display = 'flex';
+      } else {
+        featureBanner.style.display = 'none';
+      }
+
+      // 今日グリッド
+      document.getElementById('todayGrid').innerHTML = todayList.length
+        ? todayList.map(buildCard).join('')
+        : '<div class="card-empty">本日の新着はまだありません</div>';
+
+      // Past post
+      const pastSection = document.getElementById('pastSection');
+      const pastList = document.getElementById('pastList');
+      if (pastDates.length > 0) {
+        pastSection.style.display = 'flex';
+        pastList.innerHTML = pastDates.map(date => {
+          const list = allProps.filter(p => p.date === date);
+          const title = titles[date] ? `<div class="past-feature-label"><span>${titles[date]}</span></div>` : '';
+          return `
+            <div class="past-row" onclick="togglePast('pg-${date}', this)">
+              <span class="past-row-date">${fmtDate(date)}</span>
+              <img class="past-arrow" src="./assets/arrow-down.svg" alt="" id="arr-${date}">
+            </div>
+            <div class="past-cards" id="pg-${date}">
+              <div class="past-cards-inner">
+                ${title}
+                <div class="card-grid">${list.map(buildCard).join('')}</div>
+              </div>
+            </div>`;
+        }).join('');
+      } else {
+        pastSection.style.display = 'none';
+      }
+    }
+
+    function togglePast(id, row) {
+      const cards = document.getElementById(id);
+      const date = id.replace('pg-', '');
+      const arr = document.getElementById('arr-' + date);
+      const isOpen = cards.classList.toggle('open');
+      arr.src = isOpen ? './assets/arrow-up.svg' : './assets/arrow-down.svg';
+    }
+
+    function copyPropertyInfo() {
+      const p = allProps.find(p => p.id === currentPropId);
+      if (!p) return;
+      const text = p.room ? `${p.name} ${p.room}` : p.name;
+      navigator.clipboard.writeText(text).then(() => {
+        const btn = document.getElementById('copyBtn');
+        btn.classList.add('copied');
+        btn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> コピーしました`;
+        setTimeout(() => {
+          btn.classList.remove('copied');
+          btn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> 物件情報をコピー`;
+        }, 2000);
+      });
+    }
+
+    function openModal(id) {
+      const p = allProps.find(p => p.id === id);
+      if (!p) return;
+      currentPropId = id;
+      const imgs = document.getElementById('modalImages');
+      imgs.innerHTML = p.images && p.images.length
+        ? p.images.map(u => `<img class="modal-img" src="${u}" alt="${p.name}">`).join('')
+        : `<div class="modal-img" style="display:flex;align-items:center;justify-content:center;color:#ccc;font-size:12px">no image</div>`;
+      document.getElementById('modalName').textContent = `${p.name} ${p.room}`;
+      document.getElementById('modalPrice').textContent = fmtPrice(p.rent);
+      document.getElementById('modalFeeText').textContent = p.fee ? `共益費 ${fmtPrice(p.fee)}` : '共益費なし';
+      document.getElementById('modalTags').innerHTML = [p.area, p.station, p.layout, `${p.size}m²`]
+        .filter(Boolean).map(t => `<span class="modal-tag">${t}</span>`).join('');
+      document.getElementById('detailTable').innerHTML = [
+        ['築年', p.yearBuilt], ['敷金', p.deposit], ['礼金', p.keyMoney],
+        ['現況', p.condition], ['階数', p.floor], ['ペット', p.pet], ['駐車場', p.parking]
+      ].map(([l,v]) => `<div class="detail-row"><span class="detail-label">${l}</span><span class="detail-value">${v || '―'}</span></div>`).join('');
+      document.getElementById('lineBtn').href = LINE_URL;
+      document.getElementById('overlay').classList.add('open');
+      document.getElementById('modal').scrollTop = 0;
+    }
+
+    function handleOverlayClick(e) {
+      if (e.target === document.getElementById('overlay')) {
+        document.getElementById('overlay').classList.remove('open');
+      }
+    }
+
+    function load() {
+      fetch('./data.json?t=' + Date.now())
+        .then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
+        .then(render)
+        .catch(() => render({ properties: [], titles: {} }));
+    }
+    load();
+  </script>
+</body>
+</html>
