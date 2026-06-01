@@ -601,11 +601,23 @@
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
       z-index: 300;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      scrollbar-width: none;
+    }
+    .img-overlay::-webkit-scrollbar { display: none; }
+    .img-overlay.open { display: flex; }
+    /* スナップアイテム（各画像スロット） */
+    .fs-item {
+      flex-shrink: 0;
+      width: 100%;
+      height: 100dvh;
+      display: flex;
       align-items: center;
       justify-content: center;
+      scroll-snap-align: center;
     }
-    .img-overlay.open { display: flex; }
-    .img-overlay-img {
+    .fs-item img {
       max-width: min(90vw, 900px);
       max-height: 85dvh;
       object-fit: contain;
@@ -852,11 +864,10 @@
   </div>
 
   <!-- フルスクリーン画像オーバーレイ -->
-  <div class="img-overlay" id="imgOverlay" onclick="closeFullscreen()">
-    <img class="img-overlay-img" id="fsImg" src="" alt="" onclick="event.stopPropagation()">
+  <div class="img-overlay" id="imgOverlay">
     <button class="img-overlay-close" onclick="closeFullscreen()"><img src="./assets/icon-close.svg" width="40" height="40" alt="閉じる"></button>
-    <button class="img-overlay-nav img-overlay-prev" onclick="event.stopPropagation();fsPrev()"><img src="./assets/arrow-left.svg" width="44" height="44" alt="前へ"></button>
-    <button class="img-overlay-nav img-overlay-next" onclick="event.stopPropagation();fsNext()"><img src="./assets/arrow-right.svg" width="44" height="44" alt="次へ"></button>
+    <button class="img-overlay-nav img-overlay-prev" onclick="fsPrev()"><img src="./assets/arrow-left.svg" width="44" height="44" alt="前へ"></button>
+    <button class="img-overlay-nav img-overlay-next" onclick="fsNext()"><img src="./assets/arrow-right.svg" width="44" height="44" alt="次へ"></button>
   </div>
 
   <script>
@@ -1033,41 +1044,39 @@
 
     function openFullscreen(index) {
       if (!fsImages.length) return;
-      fsIndex = index;
-      document.getElementById('fsImg').src = fsImages[fsIndex];
-      document.getElementById('fsImg').alt = '';
-      const nav = document.getElementById('imgOverlay').querySelectorAll('.img-overlay-nav');
-      nav[0].style.display = fsImages.length > 1 ? 'flex' : 'none';
-      nav[1].style.display = fsImages.length > 1 ? 'flex' : 'none';
-      document.getElementById('imgOverlay').classList.add('open');
+      const overlay = document.getElementById('imgOverlay');
+      // 既存アイテムを削除
+      overlay.querySelectorAll('.fs-item').forEach(el => el.remove());
+      // 全画像をスナップアイテムとして追加
+      const close = overlay.querySelector('.img-overlay-close');
+      fsImages.forEach(u => {
+        const item = document.createElement('div');
+        item.className = 'fs-item';
+        item.innerHTML = `<img src="${u}" alt="">`;
+        overlay.insertBefore(item, close);
+      });
+      overlay.classList.add('open');
+      // 指定インデックスに即ジャンプ（アニメーションなし）
+      requestAnimationFrame(() => requestAnimationFrame(() => {
+        overlay.scrollLeft = index * overlay.clientWidth;
+      }));
     }
 
     function fsPrev() {
-      if (!fsImages.length) return;
-      fsIndex = (fsIndex - 1 + fsImages.length) % fsImages.length;
-      document.getElementById('fsImg').src = fsImages[fsIndex];
+      const overlay = document.getElementById('imgOverlay');
+      overlay.scrollBy({ left: -overlay.clientWidth, behavior: 'smooth' });
     }
 
     function fsNext() {
-      if (!fsImages.length) return;
-      fsIndex = (fsIndex + 1) % fsImages.length;
-      document.getElementById('fsImg').src = fsImages[fsIndex];
+      const overlay = document.getElementById('imgOverlay');
+      overlay.scrollBy({ left: overlay.clientWidth, behavior: 'smooth' });
     }
 
     function closeFullscreen() {
-      document.getElementById('imgOverlay').classList.remove('open');
+      const overlay = document.getElementById('imgOverlay');
+      overlay.classList.remove('open');
+      overlay.querySelectorAll('.fs-item').forEach(el => el.remove());
     }
-
-    // フルスクリーンオーバーレイのスワイプ操作（SP用）
-    let fsTouchStartX = 0;
-    const imgOverlay = document.getElementById('imgOverlay');
-    imgOverlay.addEventListener('touchstart', e => {
-      fsTouchStartX = e.touches[0].clientX;
-    }, { passive: true });
-    imgOverlay.addEventListener('touchend', e => {
-      const dx = e.changedTouches[0].clientX - fsTouchStartX;
-      if (Math.abs(dx) > 50) dx < 0 ? fsNext() : fsPrev();
-    }, { passive: true });
 
     function load() {
       fetch('./data.json?t=' + Date.now())
