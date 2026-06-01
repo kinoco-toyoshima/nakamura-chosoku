@@ -1058,6 +1058,17 @@
       document.getElementById('imgOverlay').classList.remove('open');
     }
 
+    // フルスクリーンオーバーレイのスワイプ操作（SP用）
+    let fsTouchStartX = 0;
+    const imgOverlay = document.getElementById('imgOverlay');
+    imgOverlay.addEventListener('touchstart', e => {
+      fsTouchStartX = e.touches[0].clientX;
+    }, { passive: true });
+    imgOverlay.addEventListener('touchend', e => {
+      const dx = e.changedTouches[0].clientX - fsTouchStartX;
+      if (Math.abs(dx) > 50) dx < 0 ? fsNext() : fsPrev();
+    }, { passive: true });
+
     function load() {
       fetch('./data.json?t=' + Date.now())
         .then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
