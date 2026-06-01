@@ -601,12 +601,18 @@
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
       z-index: 300;
+    }
+    .img-overlay.open { display: block; }
+    /* スクロール領域（ボタンと分離） */
+    .fs-scroll {
+      position: absolute;
+      inset: 0;
+      display: flex;
       overflow-x: auto;
       scroll-snap-type: x mandatory;
       scrollbar-width: none;
     }
-    .img-overlay::-webkit-scrollbar { display: none; }
-    .img-overlay.open { display: flex; }
+    .fs-scroll::-webkit-scrollbar { display: none; }
     /* スナップアイテム（各画像スロット） */
     .fs-item {
       flex-shrink: 0;
@@ -865,6 +871,7 @@
 
   <!-- フルスクリーン画像オーバーレイ -->
   <div class="img-overlay" id="imgOverlay">
+    <div class="fs-scroll" id="fsScroll"></div>
     <button class="img-overlay-close" onclick="closeFullscreen()"><img src="./assets/icon-close.svg" width="40" height="40" alt="閉じる"></button>
     <button class="img-overlay-nav img-overlay-prev" onclick="fsPrev()"><img src="./assets/arrow-left.svg" width="44" height="44" alt="前へ"></button>
     <button class="img-overlay-nav img-overlay-next" onclick="fsNext()"><img src="./assets/arrow-right.svg" width="44" height="44" alt="次へ"></button>
@@ -1044,38 +1051,29 @@
 
     function openFullscreen(index) {
       if (!fsImages.length) return;
-      const overlay = document.getElementById('imgOverlay');
-      // 既存アイテムを削除
-      overlay.querySelectorAll('.fs-item').forEach(el => el.remove());
-      // 全画像をスナップアイテムとして追加
-      const close = overlay.querySelector('.img-overlay-close');
-      fsImages.forEach(u => {
-        const item = document.createElement('div');
-        item.className = 'fs-item';
-        item.innerHTML = `<img src="${u}" alt="">`;
-        overlay.insertBefore(item, close);
-      });
-      overlay.classList.add('open');
-      // 指定インデックスに即ジャンプ（アニメーションなし）
+      const scroll = document.getElementById('fsScroll');
+      scroll.innerHTML = fsImages.map(u =>
+        `<div class="fs-item"><img src="${u}" alt=""></div>`
+      ).join('');
+      document.getElementById('imgOverlay').classList.add('open');
       requestAnimationFrame(() => requestAnimationFrame(() => {
-        overlay.scrollLeft = index * overlay.clientWidth;
+        scroll.scrollLeft = index * scroll.clientWidth;
       }));
     }
 
     function fsPrev() {
-      const overlay = document.getElementById('imgOverlay');
-      overlay.scrollBy({ left: -overlay.clientWidth, behavior: 'smooth' });
+      const scroll = document.getElementById('fsScroll');
+      scroll.scrollBy({ left: -scroll.clientWidth, behavior: 'smooth' });
     }
 
     function fsNext() {
-      const overlay = document.getElementById('imgOverlay');
-      overlay.scrollBy({ left: overlay.clientWidth, behavior: 'smooth' });
+      const scroll = document.getElementById('fsScroll');
+      scroll.scrollBy({ left: scroll.clientWidth, behavior: 'smooth' });
     }
 
     function closeFullscreen() {
-      const overlay = document.getElementById('imgOverlay');
-      overlay.classList.remove('open');
-      overlay.querySelectorAll('.fs-item').forEach(el => el.remove());
+      document.getElementById('imgOverlay').classList.remove('open');
+      document.getElementById('fsScroll').innerHTML = '';
     }
 
     function load() {
