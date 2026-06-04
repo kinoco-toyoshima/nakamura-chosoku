@@ -933,7 +933,7 @@
       const titles = data.titles || {};
       const td = todayStr();
       const todayList = allProps.filter(p => p.date === td);
-      const pastDates = [...new Set(allProps.filter(p => p.date !== td && p.date >= pastStr(10)).map(p => p.date))].sort((a,b) => b > a ? 1 : -1);
+      const pastDates = [...new Set(allProps.filter(p => p.date !== td && p.date >= pastStr(7)).map(p => p.date))].sort((a,b) => b > a ? 1 : -1);
 
       // 日付ピル
       document.getElementById('datePill').textContent = fmtDate(td);
