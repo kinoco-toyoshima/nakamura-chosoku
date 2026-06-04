@@ -496,8 +496,10 @@
 
     .modal-body { padding: 0 16px; }
     .modal-name { font-size: 20px; font-weight: 800; margin-bottom: 6px; margin-top: 8px; }
-    .modal-price { font-size: 26px; font-weight: 800; margin-bottom: 2px; }
-    .modal-fee-text { font-size: 13px; color: #666; margin-bottom: 14px; }
+    .modal-price-row { display: flex; align-items: baseline; gap: 6px; margin-bottom: 4px; flex-wrap: wrap; }
+    .modal-price { font-size: 26px; font-weight: 800; }
+    .modal-fee-inline { font-size: 13px; color: #666; }
+    .modal-other-text { font-size: 13px; color: #444; margin-bottom: 14px; white-space: pre-wrap; line-height: 1.6; }
     .modal-tags {
       display: flex;
       flex-wrap: wrap;
@@ -849,8 +851,11 @@
         <div class="img-indicator" id="imgIndicator"></div>
         <div class="modal-body">
           <div class="modal-name" id="modalName"></div>
-          <div class="modal-price" id="modalPrice"></div>
-          <div class="modal-fee-text" id="modalFeeText"></div>
+          <div class="modal-price-row">
+            <span class="modal-price" id="modalPrice"></span>
+            <span class="modal-fee-inline" id="modalFeeInline"></span>
+          </div>
+          <div class="modal-other-text" id="modalOtherText" style="display:none"></div>
           <div class="modal-tags" id="modalTags"></div>
           <div class="detail-table" id="detailTable"></div>
           <p style="font-size:12px;color:#888;text-align:center;margin-bottom:8px;">物件情報をコピーしてLINEでお問合せください。</p>
@@ -1022,7 +1027,10 @@
 
       document.getElementById('modalName').textContent = `${p.name} ${p.room}`;
       document.getElementById('modalPrice').textContent = fmtPrice(p.rent);
-      document.getElementById('modalFeeText').textContent = p.fee ? `共益費 ${fmtPrice(p.fee)}` : '共益費なし';
+      document.getElementById('modalFeeInline').textContent = p.fee ? `（共益費${fmtPrice(p.fee)}）` : '';
+      const otherEl = document.getElementById('modalOtherText');
+      otherEl.textContent = p.other || '';
+      otherEl.style.display = p.other ? '' : 'none';
       document.getElementById('modalTags').innerHTML = [p.area, p.station, p.layout, `${p.size}m²`]
         .filter(Boolean).map(t => `<span class="modal-tag">${t}</span>`).join('');
       document.getElementById('detailTable').innerHTML = [
