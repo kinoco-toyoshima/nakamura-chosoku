@@ -989,7 +989,7 @@
     function copyPropertyInfo() {
       const p = allProps.find(p => p.id === currentPropId);
       if (!p) return;
-      const text = p.room ? `${p.name} ${p.room}` : p.name;
+      const text = p.room ? `【超速サイトからお問合せ】 ${p.name} / ${p.room}` : `【超速サイトからお問合せ】 ${p.name}`;
       navigator.clipboard.writeText(text).then(() => {
         const btn = document.getElementById('copyBtn');
         btn.classList.add('copied');
