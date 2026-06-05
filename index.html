@@ -1035,7 +1035,8 @@
         .filter(Boolean).map(t => `<span class="modal-tag">${t}</span>`).join('');
       document.getElementById('detailTable').innerHTML = [
         ['築年', p.yearBuilt], ['敷金', p.deposit], ['礼金', p.keyMoney],
-        ['現況', p.condition], ['階数', p.floor], ['ペット', p.pet], ['駐車場', p.parking]
+        ['現況', p.condition], ['階数', p.floor], ['ペット', p.pet], ['駐車場', p.parking],
+        ['取引態様', '媒介']
       ].map(([l,v]) => `<div class="detail-row"><span class="detail-label">${l}</span><span class="detail-value">${v || '―'}</span></div>`).join('');
       document.getElementById('lineBtn').href = LINE_URL;
       document.getElementById('overlay').classList.add('open');
