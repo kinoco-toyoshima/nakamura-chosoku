@@ -1005,7 +1005,7 @@
       const p = allProps.find(p => p.id === id);
       if (!p) return;
       currentPropId = id;
-      fsImages = p.images || [];
+      fsImages = [...(p.images || []), ...(p.madoriImages || [])];
 
       // 画像
       const imgs = document.getElementById('modalImages');
