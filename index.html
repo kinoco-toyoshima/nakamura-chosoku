@@ -388,6 +388,17 @@
     .footer-text .light {
       font-weight: 400;
     }
+    .disclaimer-btn {
+      background: none;
+      border: none;
+      font-size: 11px;
+      color: #888;
+      text-decoration: underline;
+      cursor: pointer;
+      padding: 4px 0;
+      font-family: inherit;
+      margin-top: 4px;
+    }
 
     /* ===== モーダル ===== */
     .overlay {
@@ -834,7 +845,10 @@
     <div class="footer-text">
       <p>株式会社KINOCO 中村不動産</p>
       <p class="light">[福岡県知事(2) 第18428号]</p>
+      <p class="light">〒810-0021 福岡市中央区今泉1丁目12-8 天神QRビル 3F</p>
+      <p class="light"><a href="tel:0924068384" style="color:inherit;text-decoration:none">092-406-8384</a></p>
     </div>
+    <button class="disclaimer-btn" onclick="openDisclaimer()">免責事項</button>
   </footer>
 
   <!-- ===== モーダル ===== -->
@@ -880,6 +894,27 @@
     <button class="img-overlay-close" onclick="closeFullscreen()"><img src="./assets/icon-close.svg" width="40" height="40" alt="閉じる"></button>
     <button class="img-overlay-nav img-overlay-prev" onclick="fsPrev()"><img src="./assets/arrow-left.svg" width="44" height="44" alt="前へ"></button>
     <button class="img-overlay-nav img-overlay-next" onclick="fsNext()"><img src="./assets/arrow-right.svg" width="44" height="44" alt="次へ"></button>
+  </div>
+
+  <!-- 免責事項モーダル -->
+  <div class="overlay" id="disclaimerOverlay" onclick="handleDisclaimerClick(event)">
+    <div class="modal" id="disclaimerModal">
+      <button class="modal-close" onclick="closeDisclaimer()"><img src="./assets/icon-close.svg" width="34" height="34" alt="閉じる"></button>
+      <div class="modal-handle"></div>
+      <div class="modal-scroll" style="padding:0 16px 24px">
+        <h2 style="font-size:16px;font-weight:800;margin:16px 0">免責事項</h2>
+        <div style="font-size:13px;line-height:1.8;color:#444">
+          <p style="font-weight:700;margin:0 0 6px">掲載情報について</p>
+          <p style="margin:0 0 16px">本サービスの物件情報は公開時点のものです。成約・条件変更等により内容が変更または掲載が終了している場合があります。最新の空室状況はLINEよりご確認ください。</p>
+          <p style="font-weight:700;margin:0 0 6px">費用について</p>
+          <p style="margin:0 0 16px">掲載の賃料・共益費のほか、入居時に保証会社費用・鍵交換費用・火災保険料等が別途発生する場合があります。詳細はお問合せの際にご確認ください。</p>
+          <p style="font-weight:700;margin:0 0 6px">契約形態について</p>
+          <p style="margin:0 0 16px">掲載物件は原則として普通借家契約ですが、定期借家契約の物件が含まれる場合があります。契約形態の詳細はお問合せの際にご確認ください。</p>
+          <p style="font-weight:700;margin:0 0 6px">情報の正確性について</p>
+          <p style="margin:0 0 0">当社は掲載情報の正確性確保に努めていますが、情報の完全性・正確性を保証するものではありません。物件の詳細については必ずお問合せください。</p>
+        </div>
+      </div>
+    </div>
   </div>
 
   <script>
@@ -1036,8 +1071,9 @@
       document.getElementById('detailTable').innerHTML = [
         ['築年', p.yearBuilt], ['敷金', p.deposit], ['礼金', p.keyMoney],
         ['現況', p.condition], ['階数', p.floor], ['ペット', p.pet], ['駐車場', p.parking],
+        p.structure ? ['建物構造', p.structure] : null,
         ['取引態様', '媒介']
-      ].map(([l,v]) => `<div class="detail-row"><span class="detail-label">${l}</span><span class="detail-value">${v || '―'}</span></div>`).join('');
+      ].filter(Boolean).map(([l,v]) => `<div class="detail-row"><span class="detail-label">${l}</span><span class="detail-value">${v || '―'}</span></div>`).join('');
       document.getElementById('lineBtn').href = LINE_URL;
       document.getElementById('overlay').classList.add('open');
       document.getElementById('modalScroll').scrollTop = 0;
@@ -1083,6 +1119,16 @@
     function closeFullscreen() {
       document.getElementById('imgOverlay').classList.remove('open');
       document.getElementById('fsScroll').innerHTML = '';
+    }
+
+    function openDisclaimer() {
+      document.getElementById('disclaimerOverlay').classList.add('open');
+    }
+    function closeDisclaimer() {
+      document.getElementById('disclaimerOverlay').classList.remove('open');
+    }
+    function handleDisclaimerClick(e) {
+      if (e.target === document.getElementById('disclaimerOverlay')) closeDisclaimer();
     }
 
     function load() {
