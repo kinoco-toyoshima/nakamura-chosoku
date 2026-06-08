@@ -1025,6 +1025,13 @@
       const p = allProps.find(p => p.id === currentPropId);
       if (!p) return;
       const text = p.room ? `【超速サイトからお問合せ】 ${p.name} / ${p.room}` : `【超速サイトからお問合せ】 ${p.name}`;
+      const cp = allProps.find(p => p.id === currentPropId);
+      if (cp) trackEvent('copy_button_click', {
+        property_id: cp.id,
+        property_name: cp.name,
+        area: cp.area,
+        rent: cp.rent
+      });
       navigator.clipboard.writeText(text).then(() => {
         const btn = document.getElementById('copyBtn');
         btn.classList.add('copied');
@@ -1036,10 +1043,22 @@
       });
     }
 
+    function trackEvent(name, params) {
+      if (typeof gtag === 'function') gtag('event', name, params);
+    }
+
     function openModal(id) {
       const p = allProps.find(p => p.id === id);
       if (!p) return;
       currentPropId = id;
+      trackEvent('property_view', {
+        property_id: p.id,
+        property_name: p.name,
+        area: p.area,
+        rent: p.rent,
+        layout: p.layout,
+        date: p.date
+      });
       fsImages = [...(p.images || []), ...(p.madoriImages || [])];
 
       // 画像
@@ -1075,6 +1094,15 @@
         ['取引態様', '媒介']
       ].filter(Boolean).map(([l,v]) => `<div class="detail-row"><span class="detail-label">${l}</span><span class="detail-value">${v || '―'}</span></div>`).join('');
       document.getElementById('lineBtn').href = LINE_URL;
+      document.getElementById('lineBtn').onclick = () => {
+        const cp = allProps.find(p => p.id === currentPropId);
+        if (cp) trackEvent('line_inquiry_click', {
+          property_id: cp.id,
+          property_name: cp.name,
+          area: cp.area,
+          rent: cp.rent
+        });
+      };
       document.getElementById('overlay').classList.add('open');
       document.getElementById('modalScroll').scrollTop = 0;
       imgs.scrollLeft = 0;
