@@ -919,6 +919,8 @@
 
   <script>
     const LINE_URL = 'https://s.lmes.jp/landing-qr/1661555878-8a2jMoa9?uLand=p7XUwb';
+    // Past post に表示する過去日数（当日を除く直近N日分）
+    const PAST_DAYS = 3;
 
     function todayStr() {
       const d = new Date();
@@ -968,7 +970,8 @@
       const titles = data.titles || {};
       const td = todayStr();
       const todayList = allProps.filter(p => p.date === td);
-      const pastDates = [...new Set(allProps.filter(p => p.date !== td && p.date >= pastStr(7)).map(p => p.date))].sort((a,b) => b > a ? 1 : -1);
+      // Past post は直近 PAST_DAYS 日分のみ表示（データ自体は残す）
+      const pastDates = [...new Set(allProps.filter(p => p.date !== td && p.date >= pastStr(PAST_DAYS)).map(p => p.date))].sort((a,b) => b > a ? 1 : -1);
 
       // 日付ピル
       document.getElementById('datePill').textContent = fmtDate(td);
