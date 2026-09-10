@@ -524,6 +524,23 @@
       padding: 4px 10px;
       color: #444;
     }
+    /* 自社サイトの物件ページへのリンク。URLが登録された物件のときだけ出す */
+    .modal-detail-link {
+      display: none;
+      align-items: flex-start;
+      gap: 8px;
+      color: #111;
+      font-size: 14px;
+      font-weight: 700;
+      line-height: 1.55;
+      margin-bottom: 18px;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .modal-detail-link.show { display: flex; }
+    .modal-detail-link:active { opacity: 0.6; }
+    .modal-detail-link svg { flex-shrink: 0; margin-top: 2px; }
+    .modal-detail-link span { text-decoration: underline; text-underline-offset: 3px; }
+
     .detail-table {
       background: #f8f8f8;
       border-radius: 12px;
@@ -871,6 +888,14 @@
           </div>
           <div class="modal-other-text" id="modalOtherText" style="display:none"></div>
           <div class="modal-tags" id="modalTags"></div>
+          <a class="modal-detail-link" id="modalDetailLink" href="#" target="_blank" rel="noopener noreferrer">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+              <polyline points="15 3 21 3 21 9"></polyline>
+              <line x1="10" y1="14" x2="21" y2="3"></line>
+            </svg>
+            <span id="modalDetailLinkText"></span>
+          </a>
           <div class="detail-table" id="detailTable"></div>
           <p style="font-size:12px;color:#888;text-align:center;margin-bottom:8px;">物件情報をコピーしてLINEでお問合せください。</p>
           <button class="copy-btn" id="copyBtn" onclick="copyPropertyInfo()">
@@ -1090,6 +1115,24 @@
       otherEl.style.display = p.other ? '' : 'none';
       document.getElementById('modalTags').innerHTML = [p.area, p.station, p.layout, `${p.size}m²`]
         .filter(Boolean).map(t => `<span class="modal-tag">${t}</span>`).join('');
+
+      // 自社サイトの物件ページ。URLが無い物件では行ごと出さない。
+      // href に入る値なので、GAS側で検査済みでも https:// をここでも確認する
+      // （data.json は誰でも読めるファイルで、公開ページ側だけを直しても効かないため）
+      const detailLink = document.getElementById('modalDetailLink');
+      const detailUrl = /^https:\/\/[^\s"'<>]+$/i.test(p.detailUrl || '') ? p.detailUrl : '';
+      detailLink.classList.toggle('show', !!detailUrl);
+      if (detailUrl) {
+        detailLink.href = detailUrl;
+        document.getElementById('modalDetailLinkText').textContent =
+          `${[p.name, p.room].filter(Boolean).join(' ')}の情報を中村不動産のウェブサイトで見る`;
+        detailLink.onclick = () => trackEvent('detail_site_click', {
+          property_id: p.id, property_name: p.name, area: p.area, rent: p.rent
+        });
+      } else {
+        detailLink.removeAttribute('href');
+        detailLink.onclick = null;
+      }
       document.getElementById('detailTable').innerHTML = [
         ['築年', p.yearBuilt], ['敷金', p.deposit], ['礼金', p.keyMoney],
         ['現況', p.condition], ['階数', p.floor], ['ペット', p.pet], ['駐車場', p.parking],
