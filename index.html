@@ -994,6 +994,12 @@
       allProps = data.properties || [];
       const titles = data.titles || {};
       const td = todayStr();
+      // 特集タイトル未入力の日は既定文言を出す。
+      // 既定文言は FEATURE_DEFAULT_SINCE 以降の日付だけ（それより前の過去日は従来どおり帯なし）
+      const FEATURE_DEFAULT_TITLE = 'スタッフ厳選！おススメ物件';
+      const FEATURE_DEFAULT_SINCE = '2026-10-06';
+      const featureTitle = (titles, date) =>
+        titles[date] || (date >= FEATURE_DEFAULT_SINCE ? FEATURE_DEFAULT_TITLE : '');
       const todayList = allProps.filter(p => p.date === td);
       // Past post は直近 PAST_DAYS 日分のみ表示（データ自体は残す）
       const pastDates = [...new Set(allProps.filter(p => p.date !== td && p.date >= pastStr(PAST_DAYS)).map(p => p.date))].sort((a,b) => b > a ? 1 : -1);
@@ -1004,12 +1010,10 @@
       // フィーチャーバナー
       const featureText = document.getElementById('featureText');
       const featureBanner = document.getElementById('featureBanner');
-      if (titles[td]) {
-        featureText.textContent = titles[td];
-        featureBanner.style.display = 'flex';
-      } else {
-        featureBanner.style.display = 'none';
-      }
+      // 物件0件の日は既定文言の帯を出さない（タイトルを入れた日は従来どおり出す）
+      const todayTitle = todayList.length ? featureTitle(titles, td) : (titles[td] || '');
+      featureText.textContent = todayTitle;
+      featureBanner.style.display = todayTitle ? 'flex' : 'none';
 
       // 今日グリッド
       document.getElementById('todayGrid').innerHTML = todayList.length
@@ -1023,7 +1027,8 @@
         pastSection.style.display = 'flex';
         pastList.innerHTML = pastDates.map(date => {
           const list = allProps.filter(p => p.date === date);
-          const title = titles[date] ? `<div class="past-feature-label"><span>${titles[date]}</span></div>` : '';
+          const pastTitle = featureTitle(titles, date);
+          const title = pastTitle ? `<div class="past-feature-label"><span>${pastTitle}</span></div>` : '';
           return `
             <div class="past-row" onclick="togglePast('pg-${date}', this)">
               <span class="past-row-date">${fmtDate(date)}</span>
